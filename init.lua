@@ -893,6 +893,19 @@ require('lazy').setup({
       ---@diagnostic disable-next-line: missing-fields
       require('dracula').setup {
         transparent_bg = true,
+        colors = {
+          bg = "#22212C",
+          fg = "#F8F8F2",
+          selection = "#454158",
+          comment = "#7970A9",
+          cyan = "#80FFEA",
+          green = "#8AFF80",
+          orange = "#FFCA80",
+          pink = "#FF80BF",
+          purple = "#9580FF",
+          red = "#FF9580",
+          yellow = "#FFFF80",
+        },
         styles = {
           comments = { italic = false }, -- Disable italics in comments
         },
