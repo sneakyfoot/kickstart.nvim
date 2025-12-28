@@ -95,6 +95,55 @@ vim.keymap.set('n', '<leader>pv', vim.cmd.Ex)
 vim.opt.wrap = true
 vim.opt.linebreak = true
 vim.opt.breakat = ' \t;:,!?'
+
+-- Nix stuff
+
+vim.lsp.config('nixd', {
+  cmd = { 'nixd' },
+  filetypes = { 'nix' },
+})
+vim.lsp.enable 'nixd'
+
+vim.lsp.config('rust_analyzer', {
+  cmd = { 'rust-analyzer' },
+  filetypes = { 'rust' },
+})
+--  settings = {
+--    ['rust-analyzer'] = {
+--      cargo = {
+--        allFeatures = true,
+--        buildScripts = { enable = true },
+--      },
+--      check = { command = 'clippy' },
+--      completion = {
+--        autoimport = { enable = true },
+--        callable = { snippets = 'add_parentheses' },
+--        postfix = { enable = true },
+--      },
+--      diagnostics = {
+--        experimental = { enable = true },
+--      },
+--      imports = {
+--        granularity = { group = 'module' },
+--        prefix = 'self',
+--      },
+--      inlayHints = {
+--        enable = false,
+--        bindingModeHints = { enable = true },
+--        chainingHints = { enable = true },
+--        closingBraceHints = { enable = true },
+--        lifetimeElisionHints = { enable = 'always' },
+--        parameterHints = { enable = true },
+--        reborrowHints = { enable = 'always' },
+--        typeHints = { enable = true },
+--      },
+--      lens = { enable = true },
+--      procMacro = { enable = true },
+--    },
+--  },
+--})
+vim.lsp.enable 'rust_analyzer'
+--
 --
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
@@ -666,6 +715,13 @@ require('lazy').setup({
       --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
       local capabilities = require('blink.cmp').get_lsp_capabilities()
+      local function setup_server(server_name, server_opts)
+        local server = vim.tbl_deep_extend('force', {}, server_opts or {})
+        server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        server.mason = nil
+        vim.lsp.config(server_name, server)
+        vim.lsp.enable(server_name)
+      end
 
       -- Enable the following language servers
       --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -679,7 +735,6 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -704,6 +759,27 @@ require('lazy').setup({
             },
           },
         },
+        -- Astral Ty (system install, no Mason)
+        ty = {
+          mason = false,
+          cmd = { 'ty', 'server' },
+          filetypes = { 'python' },
+          settings = {
+            -- Ty settings go here when needed
+          },
+        },
+        -- Ruff handles linting/formatting; keep hover from type checker
+        ruff = {
+          mason = false,
+          init_options = {
+            settings = {
+              args = {},
+            },
+          },
+          on_attach = function(client, _)
+            client.server_capabilities.hoverProvider = false
+          end,
+        },
       }
 
       -- Ensure the servers and tools above are installed
@@ -719,7 +795,12 @@ require('lazy').setup({
       --
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
-      local ensure_installed = vim.tbl_keys(servers or {})
+      local ensure_installed = {}
+      for server, config in pairs(servers or {}) do
+        if config.mason ~= false then
+          table.insert(ensure_installed, server)
+        end
+      end
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
       })
@@ -730,15 +811,20 @@ require('lazy').setup({
         automatic_installation = false,
         handlers = {
           function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
+            if servers[server_name] and servers[server_name].mason == false then
+              return
+            end
+            setup_server(server_name, servers[server_name])
           end,
         },
       }
+
+      -- Set up servers we don't want Mason to manage (e.g. system packages on Nix)
+      for server_name, server in pairs(servers) do
+        if server.mason == false then
+          setup_server(server_name, server)
+        end
+      end
     end,
   },
 
@@ -774,6 +860,7 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        python = { 'ruff_format', 'ruff_organize_imports' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -842,6 +929,8 @@ require('lazy').setup({
         --
         -- See :h blink-cmp-config-keymap for defining your own keymap
         preset = 'default',
+        -- ['<Tab>'] = { 'select_next', 'snippet_forward', 'fallback' },
+        -- ['<S-Tab>'] = { 'select_prev', 'snippet_backward', 'fallback' },
 
         -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
         --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
@@ -856,7 +945,7 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 250 },
       },
 
       sources = {
@@ -894,17 +983,17 @@ require('lazy').setup({
       require('dracula').setup {
         transparent_bg = true,
         colors = {
-          bg = "#22212C",
-          fg = "#F8F8F2",
-          selection = "#454158",
-          comment = "#7970A9",
-          cyan = "#80FFEA",
-          green = "#8AFF80",
-          orange = "#FFCA80",
-          pink = "#FF80BF",
-          purple = "#9580FF",
-          red = "#FF9580",
-          yellow = "#FFFF80",
+          bg = '#22212C',
+          fg = '#F8F8F2',
+          selection = '#454158',
+          comment = '#7970A9',
+          cyan = '#80FFEA',
+          green = '#8AFF80',
+          orange = '#FFCA80',
+          pink = '#FF80BF',
+          purple = '#9580FF',
+          red = '#FF9580',
+          yellow = '#FFFF80',
         },
         styles = {
           comments = { italic = false }, -- Disable italics in comments
@@ -965,7 +1054,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'nix', 'rust', 'python' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1005,7 +1094,7 @@ require('lazy').setup({
   --    This is the easiest way to modularize your config.
   --
   --  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-  -- { import = 'custom.plugins' },
+  { import = 'custom.plugins' },
   --
   -- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
   -- Or use telescope!
