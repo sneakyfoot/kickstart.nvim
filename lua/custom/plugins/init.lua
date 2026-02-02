@@ -88,21 +88,35 @@ return {
   --     vim.keymap.set('n', '-', '<C-x>', { desc = 'Decrement', noremap = true })
   --   end,
   -- },
+  -- {
+  --   'github/copilot.vim',
+  --   -- event = 'InsertEnter',
+  --   -- init = function()
+  --   --   -- Keep <Tab> free; use explicit mappings.
+  --   --   vim.g.copilot_no_tab_map = true
+
+  --   --   -- Accept suggestion.
+  --   --   vim.keymap.set('i', '<C-l>', 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
+
+  --   --   -- Navigate / dismiss suggestions.
+  --   --   vim.keymap.set('i', '<C-]>', '<Plug>(copilot-next)', { silent = true })
+  --   --   vim.keymap.set('i', '<C-[>', '<Plug>(copilot-previous)', { silent = true })
+  --   --   vim.keymap.set('i', '<C-\\>', '<Plug>(copilot-dismiss)', { silent = true })
+  --   -- end,
+  -- },
   {
-    'github/copilot.vim',
-    -- event = 'InsertEnter',
-    -- init = function()
-    --   -- Keep <Tab> free; use explicit mappings.
-    --   vim.g.copilot_no_tab_map = true
-
-    --   -- Accept suggestion.
-    --   vim.keymap.set('i', '<C-l>', 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
-
-    --   -- Navigate / dismiss suggestions.
-    --   vim.keymap.set('i', '<C-]>', '<Plug>(copilot-next)', { silent = true })
-    --   vim.keymap.set('i', '<C-[>', '<Plug>(copilot-previous)', { silent = true })
-    --   vim.keymap.set('i', '<C-\\>', '<Plug>(copilot-dismiss)', { silent = true })
-    -- end,
+    'TabbyML/vim-tabby',
+    url = 'https://github.com/ppmzhang2/vim-tabby',
+    commit = '6ee6dd5',
+    lazy = false,
+    dependencies = {
+      'neovim/nvim-lspconfig',
+    },
+    init = function()
+      vim.g.tabby_agent_start_command = { 'npx', 'tabby-agent', '--stdio' }
+      vim.g.tabby_inline_completion_trigger = 'auto'
+      vim.g.tabby_inline_completion_keybinding_accept = "<C-'>"
+    end,
   },
   {
     'chrisgrieser/nvim-origami',

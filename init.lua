@@ -107,6 +107,16 @@ vim.lsp.enable 'nixd'
 vim.lsp.config('rust_analyzer', {
   cmd = { 'rust-analyzer' },
   filetypes = { 'rust' },
+  settings = {
+    ['rust-analyzer'] = {
+      cargo = {
+        buildScripts = { enable = true },
+        -- if you rely on feature-gated derives:
+        -- features = "all",
+      },
+      procMacro = { enable = true },
+    },
+  },
 })
 --  settings = {
 --    ['rust-analyzer'] = {
@@ -145,6 +155,7 @@ vim.lsp.config('rust_analyzer', {
 vim.lsp.enable 'rust_analyzer'
 --
 --
+
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
@@ -715,6 +726,9 @@ require('lazy').setup({
       --  When you add blink.cmp, luasnip, etc. Neovim now has *more* capabilities.
       --  So, we create new capabilities with blink.cmp, and then broadcast that to the servers.
       local capabilities = require('blink.cmp').get_lsp_capabilities()
+      -- Standardize on UTF-16 to avoid mixed-encoding change tracking.
+      capabilities.general = capabilities.general or {}
+      capabilities.general.positionEncodings = { 'utf-16' }
       local function setup_server(server_name, server_opts)
         local server = vim.tbl_deep_extend('force', {}, server_opts or {})
         server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
@@ -1120,6 +1134,16 @@ require('lazy').setup({
       lazy = '💤 ',
     },
   },
+})
+
+-- Ensure Tabby uses UTF-16 so all attached clients agree on position encoding.
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    if client and client.name == 'tabby' then
+      client.offset_encoding = 'utf-16'
+    end
+  end,
 })
 
 -- The line beneath this is called `modeline`. See `:help modeline`
