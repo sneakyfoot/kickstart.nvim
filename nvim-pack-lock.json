@@ -53,6 +53,10 @@
       "rev": "6eb15358bb9fc88f0d3401d8538d56652e9bdf3c",
       "src": "https://github.com/neovim-treesitter/treesitter-parser-registry"
     },
+    "which-key.nvim": {
+      "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",
+      "src": "https://github.com/folke/which-key.nvim"
+    },
     "yazi.nvim": {
       "rev": "cc2196861dc2e0f9b6e0cc2d0570e3aa3b083d0c",
       "src": "https://github.com/mikavilpas/yazi.nvim"

@@ -99,6 +99,9 @@ vim.pack.add({
 
   -- Lua dev: types for vim.* APIs when editing config
   { src = 'https://github.com/folke/lazydev.nvim' },
+
+  -- Key hint popup
+  { src = 'https://github.com/folke/which-key.nvim' },
 })
 
 -- ============================================================================
@@ -349,6 +352,27 @@ require('yazi').setup({
 map({ 'n', 'v' }, '<leader>-', '<cmd>Yazi<cr>', { desc = 'Open yazi at current file' })
 map('n', '<leader>cw', '<cmd>Yazi cwd<cr>', { desc = 'Open yazi at cwd' })
 map('n', '<c-up>', '<cmd>Yazi toggle<cr>', { desc = 'Resume last yazi' })
+
+-- ============================================================================
+-- Which-key (popup for follow-up keypresses)
+-- ============================================================================
+
+require('which-key').setup({
+  delay = 0,
+  icons = {
+    mappings = vim.g.have_nerd_font,
+    keys = vim.g.have_nerd_font and {} or {
+      Up = '<Up> ', Down = '<Down> ', Left = '<Left> ', Right = '<Right> ',
+      C = '<C-…> ', M = '<M-…> ', D = '<D-…> ', S = '<S-…> ',
+      CR = '<CR> ', Esc = '<Esc> ', BS = '<BS> ', Space = '<Space> ', Tab = '<Tab> ',
+    },
+  },
+  spec = {
+    { '<leader>s', group = '[S]earch' },
+    { '<leader>t', group = '[T]oggle' },
+    { '<leader>c', group = '[C]wd' },
+  },
+})
 
 -- ============================================================================
 -- Origami (folding)
