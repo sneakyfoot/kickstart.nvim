@@ -1135,6 +1135,33 @@ require('lazy').setup({
     },
   },
 })
+require('origami').setup {
+  useLspFoldsWithTreesitterFallback = {
+    enabled = true,
+    foldmethodIfNeitherIsAvailable = 'indent', ---@type string|fun(bufnr: number): string
+  },
+  pauseFoldsOnSearch = true,
+  foldtext = {
+    enabled = true,
+    padding = { width = 3 },
+    lineCount = {
+      template = 'Folded %d lines', -- `%d` is replaced with the number of folded lines
+      hlgroup = 'Comment',
+    },
+    diagnosticsCount = true, -- uses hlgroups and icons from `vim.diagnostic.config().signs`
+    gitsignsCount = true, -- requires `gitsigns.nvim`
+    disableOnFt = { 'snacks_picker_input' }, ---@type string[]
+  },
+  autoFold = {
+    enabled = false,
+    kinds = {}, ---@type lsp.FoldingRangeKind[]
+  },
+  foldKeymaps = {
+    setup = true, -- modifies `h`, `l`, `^`, and `$`
+    closeOnlyOnFirstColumn = false, -- `h` and `^` only close in the 1st column
+    scrollLeftOnCaret = false, -- `^` should scroll left (basically mapped to `0^`)
+  },
+}
 
 -- Ensure Tabby uses UTF-16 so all attached clients agree on position encoding.
 vim.api.nvim_create_autocmd('LspAttach', {

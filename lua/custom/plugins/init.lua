@@ -48,76 +48,19 @@ return {
     end,
   },
   -- {
-  --   'NickvanDyke/opencode.nvim',
+  --   'TabbyML/vim-tabby',
+  --   url = 'https://github.com/ppmzhang2/vim-tabby',
+  --   commit = '6ee6dd5',
+  --   lazy = false,
   --   dependencies = {
-  --     -- Recommended for `ask()` and `select()`.
-  --     -- Required for `snacks` provider.
-  --     ---@module 'snacks' <- Loads `snacks.nvim` types for configuration intellisense.
-  --     { 'folke/snacks.nvim', opts = { input = {}, picker = {}, terminal = {} } },
+  --     'neovim/nvim-lspconfig',
   --   },
-  --   config = function()
-  --     ---@type opencode.Opts
-  --     vim.g.opencode_opts = {
-  --       -- Your configuration, if any — see `lua/opencode/config.lua`, or "goto definition".
-  --     }
-
-  --     -- Required for `opts.events.reload`.
-  --     vim.o.autoread = true
-
-  --     -- Recommended/example keymaps.
-  --     vim.keymap.set({ 'n', 'x' }, '<C-a>', function()
-  --       require('opencode').ask('@this: ', { submit = true })
-  --     end, { desc = 'Ask opencode' })
-  --     vim.keymap.set({ 'n', 'x' }, '<C-x>', function()
-  --       require('opencode').select()
-  --     end, { desc = 'Execute opencode action…' })
-  --     vim.keymap.set({ 'n', 'x' }, 'ga', function()
-  --       require('opencode').prompt '@this'
-  --     end, { desc = 'Add to opencode' })
-  --     vim.keymap.set({ 'n', 't' }, '<C-.>', function()
-  --       require('opencode').toggle()
-  --     end, { desc = 'Toggle opencode' })
-  --     vim.keymap.set('n', '<S-C-u>', function()
-  --       require('opencode').command 'session.half.page.up'
-  --     end, { desc = 'opencode half page up' })
-  --     vim.keymap.set('n', '<S-C-d>', function()
-  --       require('opencode').command 'session.half.page.down'
-  --     end, { desc = 'opencode half page down' })
-  --     -- You may want these if you stick with the opinionated "<C-a>" and "<C-x>" above — otherwise consider "<leader>o".
-  --     vim.keymap.set('n', '+', '<C-a>', { desc = 'Increment', noremap = true })
-  --     vim.keymap.set('n', '-', '<C-x>', { desc = 'Decrement', noremap = true })
+  --   init = function()
+  --     vim.g.tabby_agent_start_command = { 'npx', 'tabby-agent', '--stdio' }
+  --     vim.g.tabby_inline_completion_trigger = 'auto'
+  --     vim.g.tabby_inline_completion_keybinding_accept = '<C-a>'
   --   end,
   -- },
-  -- {
-  --   'github/copilot.vim',
-  --   -- event = 'InsertEnter',
-  --   -- init = function()
-  --   --   -- Keep <Tab> free; use explicit mappings.
-  --   --   vim.g.copilot_no_tab_map = true
-
-  --   --   -- Accept suggestion.
-  --   --   vim.keymap.set('i', '<C-l>', 'copilot#Accept("\\<CR>")', { expr = true, replace_keycodes = false })
-
-  --   --   -- Navigate / dismiss suggestions.
-  --   --   vim.keymap.set('i', '<C-]>', '<Plug>(copilot-next)', { silent = true })
-  --   --   vim.keymap.set('i', '<C-[>', '<Plug>(copilot-previous)', { silent = true })
-  --   --   vim.keymap.set('i', '<C-\\>', '<Plug>(copilot-dismiss)', { silent = true })
-  --   -- end,
-  -- },
-  {
-    'TabbyML/vim-tabby',
-    url = 'https://github.com/ppmzhang2/vim-tabby',
-    commit = '6ee6dd5',
-    lazy = false,
-    dependencies = {
-      'neovim/nvim-lspconfig',
-    },
-    init = function()
-      vim.g.tabby_agent_start_command = { 'npx', 'tabby-agent', '--stdio' }
-      vim.g.tabby_inline_completion_trigger = 'auto'
-      vim.g.tabby_inline_completion_keybinding_accept = "<C-'>"
-    end,
-  },
   {
     'chrisgrieser/nvim-origami',
     event = 'VeryLazy',
