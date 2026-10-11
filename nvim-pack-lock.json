@@ -53,6 +53,10 @@
       "rev": "6eb15358bb9fc88f0d3401d8538d56652e9bdf3c",
       "src": "https://github.com/neovim-treesitter/treesitter-parser-registry"
     },
+    "vim-fountain": {
+      "rev": "4464261ce6f173e5c2dab54b34a2860102c27d25",
+      "src": "https://github.com/kblin/vim-fountain"
+    },
     "which-key.nvim": {
       "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",
       "src": "https://github.com/folke/which-key.nvim"

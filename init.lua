@@ -102,6 +102,9 @@ vim.pack.add({
 
   -- Key hint popup
   { src = 'https://github.com/folke/which-key.nvim' },
+
+  -- Fountain screenplay filetype + syntax (nvim ships none)
+  { src = 'https://github.com/kblin/vim-fountain' },
 })
 
 -- ============================================================================
@@ -370,6 +373,7 @@ require('which-key').setup({
     { '<leader>s', group = '[S]earch' },
     { '<leader>t', group = '[T]oggle' },
     { '<leader>c', group = '[C]wd' },
+    { '<leader>r', group = '[R]ender' },
   },
 })
 
